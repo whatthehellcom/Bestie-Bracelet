@@ -1,10 +1,4 @@
-// app.js
-
-// Import Firebase SDK functions
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
-// Your Firebase configuration
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDBAQ0YqtmARCjQBc5T2cjxmIRcDvLyUl0",
   authDomain: "fir-configjs-c9f1f.firebaseapp.com",
@@ -16,43 +10,25 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// DOM elements
-const messageBox = document.getElementById('message-box');
-const messageInput = document.getElementById('message-input');
-const sendBtn = document.getElementById('send-btn');
+// Send a message
+function sendMessage(customMessage) {
+  const msg = customMessage || document.getElementById("message-input").value;
+  if (!msg.trim()) return;
 
-// Send message function (also used by preset buttons)
-export function sendMessage(text) {
-  let message = text || messageInput.value.trim();
-  if (message.length === 0) return;
-
-  // Push message to Firebase Realtime Database
-  push(ref(database, 'messages'), {
-    text: message,
-    timestamp: Date.now()
+  db.ref("messages").push({
+    text: msg,
+    time: Date.now()
   });
 
-  messageInput.value = '';
+  document.getElementById("message-input").value = "";
 }
 
-// Listen for new messages from Firebase
-onChildAdded(ref(database, 'messages'), (data) => {
-  const msg = data.val();
-  displayMessage(msg.text);
+// Listen for new messages
+db.ref("messages").on("child_added", (snapshot) => {
+  const msg = snapshot.val().text;
+  document.getElementById("message-box").innerText = `📨 New: ${msg}`;
 });
 
-// Display message on the chat
-function displayMessage(text) {
-  messageBox.textContent = text;
-}
-
-// Attach event listener to send button
-sendBtn.addEventListener('click', () => {
-  sendMessage();
-});
-
-// Make sendPresetMessage global for inline HTML calls
-window.sendPresetMessage = sendMessage;
