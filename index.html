@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bestie Bracelet 💬</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Sidebar 1 -->
+    <div class="sidebar">
+      <div class="username toggle-btn">RANDOM TEXT ▼</div>
+      <div class="message-options" style="display: none;">
+        <button onclick="sendPresetMessage('HALLO')">HALLO </button>
+        <button onclick="sendPresetMessage('ALO')">ALO </button>
+        <button onclick="sendPresetMessage('WA SO BE SO ')">WA SO BE SO </button>
+        <button onclick="sendPresetMessage('I miss you ')">I miss you </button>
+        <button onclick="sendPresetMessage('WHERE ARE U ')">WHERE ARE U </button>
+      </div>
+    </div>
+
+    <!-- Sidebar 2 -->
+    <div class="sidebar">
+      <div class="username toggle-btn">loveanddeepspace ▼</div>
+      <div class="message-options" style="display: none;">
+        <button onclick="sendPresetMessage('Rafayel')">Rafayel</button>
+        <button onclick="sendPresetMessage('Sylus')">Sylus</button>
+        <button onclick="sendPresetMessage('Caleb')">Caleb</button>
+        <button onclick="sendPresetMessage('Zayne')">Zayne</button>
+        <button onclick="sendPresetMessage('im playing my game')">im playing the game</button>
+        <button onclick="sendPresetMessage('i need a wish')">  want a wish</button>
+        <button onclick="sendPresetMessage('GOJO')">Gojo</button>
+      </div>
+    </div>
+
+    <!-- Sidebar 3 -->
+    <div class="sidebar">
+      <div class="username toggle-btn">MY mood now ▼</div>
+      <div class="message-options" style="display: none;">
+        <button onclick="sendPresetMessage('Happy')">Happy</button>
+        <button onclick="sendPresetMessage('Sad')">Sad</button>
+        <button onclick="sendPresetMessage('Just no energy')">Just no energy</button>
+        <button onclick="sendPresetMessage('Sleeping')">Sleeping</button>
+      </div>
+    </div>
+
+    <!-- Main chat area -->
+    <div class="main-chat">
+      <h1>🎀 Bestie Buzz 🎀</h1>
+      <p class="subtitle">Send anything, jokes, and weird thoughts 💭</p>
+
+      <div id="message-box">👀 Waiting for weirdness...</div>
+
+      <input type="text" id="message-input" placeholder="Type something random..." />
+      <button id="send-btn">Launch Message 🚀</button>
+    </div>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+
+  <script>
+    // Attach toggle listeners for all sidebar username buttons
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const options = btn.nextElementSibling;
+        if (options.style.display === 'none') {
+          options.style.display = 'block';
+          btn.textContent = btn.textContent.replace('▼', '▲');
+        } else {
+          options.style.display = 'none';
+          btn.textContent = btn.textContent.replace('▲', '▼');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
