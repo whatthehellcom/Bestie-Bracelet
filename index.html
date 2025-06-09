@@ -2,17 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bestie Bracelet 💬</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f0f0f0;
+    }
+    .container {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .sidebar {
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      width: 150px;
+    }
+    .username {
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 5px;
+    }
+    .message-options {
+      display: none;
+      margin-top: 5px;
+    }
+    .message-options button {
+      display: block;
+      width: 100%;
+      margin-bottom: 5px;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .message-options button:hover {
+      background: #2563eb;
+    }
+    .main-chat {
+      flex-grow: 1;
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+    }
+    #message-box {
+      flex-grow: 1;
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    #message-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      flex-shrink: 0;
+      width: calc(100% - 120px);
+    }
+    button.send-btn {
+      padding: 10px;
+      font-size: 16px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #10b981;
+      color: white;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 100px;
+    }
+    button.send-btn:hover {
+      background: #059669;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-
     <!-- Sidebar 1 -->
     <div class="sidebar">
       <div class="username toggle-btn">RANDOM TEXT ▼</div>
-      <div class="message-options" style="display: none;">
+      <div class="message-options">
         <button onclick="sendPresetMessage('HALLO')">HALLO</button>
         <button onclick="sendPresetMessage('ALO')">ALO</button>
         <button onclick="sendPresetMessage('WA SO BE SO')">WA SO BE SO</button>
@@ -24,56 +109,107 @@
     <!-- Sidebar 2 -->
     <div class="sidebar">
       <div class="username toggle-btn">loveanddeepspace ▼</div>
-      <div class="message-options" style="display: none;">
+      <div class="message-options">
         <button onclick="sendPresetMessage('Rafayel')">Rafayel</button>
         <button onclick="sendPresetMessage('Sylus')">Sylus</button>
         <button onclick="sendPresetMessage('Caleb')">Caleb</button>
         <button onclick="sendPresetMessage('Zayne')">Zayne</button>
-        <button onclick="sendPresetMessage('I’m playing the game')">Game</button>
-        <button onclick="sendPresetMessage('I need a wish')">Wish</button>
-        <button onclick="sendPresetMessage('Gojo')">Gojo</button>
+        <button onclick="sendPresetMessage('im playing my game')">im playing the game</button>
+        <button onclick="sendPresetMessage('i need a wish')">want a wish</button>
+        <button onclick="sendPresetMessage('GOJO')">Gojo</button>
       </div>
     </div>
 
     <!-- Sidebar 3 -->
     <div class="sidebar">
-      <div class="username toggle-btn">My Mood Now ▼</div>
-      <div class="message-options" style="display: none;">
+      <div class="username toggle-btn">MY mood now ▼</div>
+      <div class="message-options">
         <button onclick="sendPresetMessage('Happy')">Happy</button>
         <button onclick="sendPresetMessage('Sad')">Sad</button>
-        <button onclick="sendPresetMessage('Just no energy')">No energy</button>
-        <button onclick="sendPresetMessage('Sleeping')">Sleeping</button>
+        <button onclick="sendPresetMessage('just no energy')">just no energy</button>
+        <button onclick="sendPresetMessage('sleeping')">sleeping</button>
       </div>
     </div>
 
-    <!-- Main Chat Area -->
+    <!-- Main chat area -->
     <div class="main-chat">
       <h1>🎀 Bestie Buzz 🎀</h1>
       <p class="subtitle">Send anything, jokes, and weird thoughts 💭</p>
-
       <div id="message-box">👀 Waiting for weirdness...</div>
-
-      <input type="text" id="message-input" placeholder="Type something random..." />
-      <button onclick="sendMessage()">Launch Message 🚀</button>
+      <div style="display: flex; margin-top: 10px;">
+        <input type="text" id="message-input" placeholder="Type something random..." />
+        <button class="send-btn" onclick="sendCustomMessage()">Launch Message 🚀</button>
+      </div>
     </div>
-
   </div>
 
-  <!-- Firebase and App -->
-  <script type="module" src="app.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDBAQ0YqtmARCjQBc5T2cjxmIRcDvLyUl0",
+      authDomain: "fir-configjs-c9f1f.firebaseapp.com",
+      projectId: "fir-configjs-c9f1f",
+      storageBucket: "fir-configjs-c9f1f.appspot.com",
+      messagingSenderId: "28654546902",
+      appId: "1:28654546902:web:5ec04fb4a93900483d7e77",
+      measurementId: "G-7T6WLXSE0N",
+      databaseURL: "https://fir-configjs-c9f1f-default-rtdb.firebaseio.com/"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const messagesRef = ref(database, 'messages');
+
+    function sendMessage(text) {
+      if (!text) return;
+      push(messagesRef, { text, timestamp: Date.now() });
+    }
+
+    window.sendMessage = sendMessage;
+
+    // Listen for new messages and show them
+    onChildAdded(messagesRef, (data) => {
+      const msg = data.val();
+      const box = document.getElementById('message-box');
+
+      // Clear default text on first message
+      if (box.textContent.includes("👀 Waiting")) {
+        box.textContent = '';
+      }
+
+      const div = document.createElement('div');
+      div.textContent = msg.text;
+      div.style.padding = '4px 8px';
+      div.style.borderBottom = '1px solid #ddd';
+      box.appendChild(div);
+
+      // Scroll to bottom so latest message is visible
+      box.scrollTop = box.scrollHeight;
+    });
+
+    window.sendCustomMessage = function () {
+      const input = document.getElementById('message-input');
+      if (input.value.trim()) {
+        sendMessage(input.value.trim());
+        input.value = '';
+      }
+    };
+
+    window.sendPresetMessage = function (text) {
+      sendMessage(text);
+    };
+
+    // Toggle dropdown menus for sidebars
     document.querySelectorAll('.toggle-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const options = btn.nextElementSibling;
-        options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        options.style.display = options.style.display === 'block' ? 'none' : 'block';
         btn.textContent = btn.textContent.includes('▼') ? btn.textContent.replace('▼', '▲') : btn.textContent.replace('▲', '▼');
       });
     });
-
-    function sendPresetMessage(text) {
-      sendMessage(text);
-    }
   </script>
 </body>
 </html>
