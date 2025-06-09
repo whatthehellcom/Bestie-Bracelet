@@ -13,11 +13,11 @@
     <div class="sidebar">
       <div class="username toggle-btn">RANDOM TEXT ▼</div>
       <div class="message-options" style="display: none;">
-        <button onclick="sendPresetMessage('HALLO')">HALLO </button>
-        <button onclick="sendPresetMessage('ALO')">ALO </button>
-        <button onclick="sendPresetMessage('WA SO BE SO')">WA SO BE SO </button>
-        <button onclick="sendPresetMessage('I miss you')">I miss you </button>
-        <button onclick="sendPresetMessage('WHERE ARE U')">WHERE ARE U </button>
+        <button onclick="sendPresetMessage('HALLO')">HALLO</button>
+        <button onclick="sendPresetMessage('ALO')">ALO</button>
+        <button onclick="sendPresetMessage('WA SO BE SO')">WA SO BE SO</button>
+        <button onclick="sendPresetMessage('I miss you')">I miss you</button>
+        <button onclick="sendPresetMessage('WHERE ARE U')">WHERE ARE U</button>
       </div>
     </div>
 
@@ -29,24 +29,24 @@
         <button onclick="sendPresetMessage('Sylus')">Sylus</button>
         <button onclick="sendPresetMessage('Caleb')">Caleb</button>
         <button onclick="sendPresetMessage('Zayne')">Zayne</button>
-        <button onclick="sendPresetMessage('im playing the game')">im playing the game</button>
-        <button onclick="sendPresetMessage('want a wish')">want a wish</button>
+        <button onclick="sendPresetMessage('I’m playing the game')">Game</button>
+        <button onclick="sendPresetMessage('I need a wish')">Wish</button>
         <button onclick="sendPresetMessage('Gojo')">Gojo</button>
       </div>
     </div>
 
     <!-- Sidebar 3 -->
     <div class="sidebar">
-      <div class="username toggle-btn">MY mood now ▼</div>
+      <div class="username toggle-btn">My Mood Now ▼</div>
       <div class="message-options" style="display: none;">
         <button onclick="sendPresetMessage('Happy')">Happy</button>
         <button onclick="sendPresetMessage('Sad')">Sad</button>
-        <button onclick="sendPresetMessage('just no energy')">just no energy</button>
-        <button onclick="sendPresetMessage('sleeping')">sleeping</button>
+        <button onclick="sendPresetMessage('Just no energy')">No energy</button>
+        <button onclick="sendPresetMessage('Sleeping')">Sleeping</button>
       </div>
     </div>
 
-    <!-- Main chat area -->
+    <!-- Main Chat Area -->
     <div class="main-chat">
       <h1>🎀 Bestie Buzz 🎀</h1>
       <p class="subtitle">Send anything, jokes, and weird thoughts 💭</p>
@@ -56,20 +56,18 @@
       <input type="text" id="message-input" placeholder="Type something random..." />
       <button onclick="sendMessage()">Launch Message 🚀</button>
     </div>
+
   </div>
 
-  <!-- Toggle functionality -->
+  <!-- Firebase and App -->
+  <script type="module" src="app.js"></script>
+
   <script>
     document.querySelectorAll('.toggle-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const options = btn.nextElementSibling;
-        if (options.style.display === 'none') {
-          options.style.display = 'block';
-          btn.textContent = btn.textContent.replace('▼', '▲');
-        } else {
-          options.style.display = 'none';
-          btn.textContent = btn.textContent.replace('▲', '▼');
-        }
+        options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        btn.textContent = btn.textContent.includes('▼') ? btn.textContent.replace('▼', '▲') : btn.textContent.replace('▲', '▼');
       });
     });
 
@@ -77,10 +75,5 @@
       sendMessage(text);
     }
   </script>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
