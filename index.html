@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bestie Bracelet 💬</title>
   <style>
+    /* Basic styling */
     body {
       font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
+      margin: 0; 
+      padding: 0;
       background: #f0f0f0;
     }
     .container {
@@ -67,6 +69,10 @@
       margin-bottom: 10px;
       font-size: 16px;
     }
+    #message-box div {
+      padding: 4px 8px;
+      border-bottom: 1px solid #ddd;
+    }
     #message-input {
       padding: 10px;
       font-size: 16px;
@@ -93,6 +99,7 @@
   </style>
 </head>
 <body>
+
   <div class="container">
     <!-- Sidebar 1 -->
     <div class="sidebar">
@@ -143,73 +150,86 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+  <!-- Firebase v8 (compat) SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    const firebaseConfig = {
+  <script>
+    // 1. Your Firebase configuration (keep exactly as shown)
+    var firebaseConfig = {
       apiKey: "AIzaSyDBAQ0YqtmARCjQBc5T2cjxmIRcDvLyUl0",
       authDomain: "fir-configjs-c9f1f.firebaseapp.com",
+      databaseURL: "https://fir-configjs-c9f1f-default-rtdb.firebaseio.com/",
       projectId: "fir-configjs-c9f1f",
       storageBucket: "fir-configjs-c9f1f.appspot.com",
       messagingSenderId: "28654546902",
       appId: "1:28654546902:web:5ec04fb4a93900483d7e77",
-      measurementId: "G-7T6WLXSE0N",
-      databaseURL: "https://fir-configjs-c9f1f-default-rtdb.firebaseio.com/"
+      measurementId: "G-7T6WLXSE0N"
     };
+    // 2. Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database().ref('messages');
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const messagesRef = ref(database, 'messages');
-
+    // 3. sendMessage() pushes a new message to the Realtime Database
     function sendMessage(text) {
       if (!text) return;
-      push(messagesRef, { text, timestamp: Date.now() });
+      db.push({
+        text: text,
+        timestamp: Date.now()
+      });
     }
-
     window.sendMessage = sendMessage;
 
-    // Listen for new messages and show them
-    onChildAdded(messagesRef, (data) => {
-      const msg = data.val();
-      const box = document.getElementById('message-box');
+    // 4. sendCustomMessage() reads input box and calls sendMessage
+    function sendCustomMessage() {
+      var input = document.getElementById('message-input');
+      var val = input.value.trim();
+      if (val.length === 0) return;
+      sendMessage(val);
+      input.value = '';
+    }
+    window.sendCustomMessage = sendCustomMessage;
 
-      // Clear default text on first message
+    // 5. sendPresetMessage() calls sendMessage(text)
+    function sendPresetMessage(text) {
+      sendMessage(text);
+    }
+    window.sendPresetMessage = sendPresetMessage;
+
+    // 6. onChildAdded listener to show every new message
+    db.on('child_added', function(snapshot) {
+      var data = snapshot.val();
+      var box = document.getElementById('message-box');
+
+      // Remove placeholder text if present
       if (box.textContent.includes("👀 Waiting")) {
         box.textContent = '';
       }
 
-      const div = document.createElement('div');
-      div.textContent = msg.text;
-      div.style.padding = '4px 8px';
-      div.style.borderBottom = '1px solid #ddd';
+      var div = document.createElement('div');
+      div.textContent = data.text;
       box.appendChild(div);
 
-      // Scroll to bottom so latest message is visible
+      // Auto-scroll to the bottom
       box.scrollTop = box.scrollHeight;
     });
 
-    window.sendCustomMessage = function () {
-      const input = document.getElementById('message-input');
-      if (input.value.trim()) {
-        sendMessage(input.value.trim());
-        input.value = '';
-      }
-    };
-
-    window.sendPresetMessage = function (text) {
-      sendMessage(text);
-    };
-
-    // Toggle dropdown menus for sidebars
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const options = btn.nextElementSibling;
-        options.style.display = options.style.display === 'block' ? 'none' : 'block';
-        btn.textContent = btn.textContent.includes('▼') ? btn.textContent.replace('▼', '▲') : btn.textContent.replace('▲', '▼');
+    // 7. Toggle function for all sidebars
+    document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var opts = btn.nextElementSibling;
+        if (opts.style.display === 'block') {
+          opts.style.display = 'none';
+          btn.textContent = btn.textContent.replace('▲','▼');
+        } else {
+          opts.style.display = 'block';
+          btn.textContent = btn.textContent.replace('▼','▲');
+        }
       });
     });
   </script>
+
 </body>
 </html>
+
+     
